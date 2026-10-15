@@ -28,9 +28,22 @@ def get_data(query: str):
         return results
     else:
         print("Query failed:", data)
+def get_latest_value(query: str):
+    response = requests.get(ENDPOINT, params={'query': query})
+    data = response.json()
 
+    return data['data']['result'][0]['value'][1]
 
+st.set_option("client.toolbarMode", "viewer")
 st.title("Pogoda w krakowie")
+
+col1, col2 = st.columns(2)
+col1.metric("Temperatura", get_latest_value(query="weather_temperature") + " °C")
+col2.metric("Wilgotność", get_latest_value(query="weather_humidity") + " %")
+
+
+
+
 
 time_period_from_button = st.radio(
     "wybierz przedział czasu:",
