@@ -1,3 +1,5 @@
 .venv
 webApp/.env
 .idea
+webApp/__pycache__/
+.DS_Store

@@ -16,7 +16,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['debianssh']) {
+                sshagent(credentials: ['deploy-server-ssh']) {
                     sh '''
                         ssh $DEPLOY_USER@$DEPLOY_HOST "echo połączono && docker --version"
                     '''
