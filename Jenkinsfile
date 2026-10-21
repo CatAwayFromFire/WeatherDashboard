@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    triggers {
+    pollSCM('H/2 * * * *')
+    }
     environment {
         DEPLOY_USER = 'milosz'
         DEPLOY_HOST = '192.168.100.137'
