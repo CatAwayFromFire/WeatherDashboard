@@ -34,6 +34,13 @@ def get_latest_value(query: str):
 
     return data['data']['result'][0]['value'][1]
 
+st.set_page_config(
+    page_title="Pogoda w Krakowie",      # Sets the browser tab title
+    page_icon= "☀",                   # Sets the favicon (emoji, image path, or URL)
+    layout="wide"                     # Optional: Choose "centered" or "wide"
+)
+
+
 st.set_option("client.toolbarMode", "viewer")
 st.title("Pogoda w Krakowie")
 
