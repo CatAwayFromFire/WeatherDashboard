@@ -54,7 +54,7 @@ col2.metric("Wilgotność", get_latest_value(query="weather_humidity") + "%")
 
 time_period_from_button = st.radio(
     "wybierz przedział czasu:",
-    ["12 godzin", "1 dzień", "tydzień", "rok"],
+    ["1 dzień", "tydzień", "rok"],
     horizontal=True
 )
 time_labels = {
