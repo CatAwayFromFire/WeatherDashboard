@@ -18,7 +18,7 @@ pipeline {
             steps {
                 sshagent(credentials: ['deploy-server-ssh']) {
                     sh '''
-                        ssh $DEPLOY_USER@$DEPLOY_HOST "echo połączono && docker --version"
+                        ssh $DEPLOY_USER@$DEPLOY_HOST "cd ~/weather_dashboard && git fetch && git checkout $GIT_COMMIT && docker compose up -d --build"
                     '''
                 }
             }
