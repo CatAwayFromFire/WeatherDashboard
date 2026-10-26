@@ -58,7 +58,6 @@ time_period_from_button = st.radio(
     horizontal=True
 )
 time_labels = {
-    "12 godzin":"12h",
     "1 dzień":"1d",
     "tydzień":"7d",
     "rok":"1y",
