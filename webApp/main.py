@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 PROMETHEUS_URL = os.getenv("PROMETHEUS_URL")
@@ -10,9 +11,29 @@ PROMETHEUS_URL = os.getenv("PROMETHEUS_URL")
 ENDPOINT = f'{PROMETHEUS_URL}/api/v1/query'
 
 
-def get_data(query: str):
+def get_data(query: str, time_period : str):
+    time_labels = {
+        "1d":[1,"5m"],
+        "7d":[7,"30m"],
+        "1y":[365,"4h"],
+    }
 
-    response = requests.get(ENDPOINT, params={'query': query})
+    end_time = int(time.time())
+    start_time = end_time - (time_labels[time_period][0] * 24 * 60 * 60)
+
+
+
+    step = time_labels[time_period][1]
+
+    params = {
+        # average of the raw samples inside each step window
+        "query": f"avg_over_time({query}[{step}])",
+        "start": start_time,
+        "end": end_time,
+        "step": step
+    }
+
+    response = requests.get(ENDPOINT+"_range", params=params)
     data = response.json()
 
     if data['status'] == 'success':
@@ -28,6 +49,8 @@ def get_data(query: str):
         return results
     else:
         print("Query failed:", data)
+        st.error(f"Prometheus query failed: {data.get('error')}")
+        st.stop()
 def get_latest_value(query: str):
     response = requests.get(ENDPOINT, params={'query': query})
     data = response.json()
@@ -62,11 +85,11 @@ time_labels = {
     "tydzień":"7d",
     "rok":"1y",
 }
-time_period = time_labels[time_period_from_button]
+time_period = str(time_labels[time_period_from_button])
 
 st.subheader("Wilgotność")
 
-humidity = get_data(query=f"weather_humidity[{time_period}]")[0]
+humidity = get_data(query="weather_humidity", time_period=time_period)[0]
 df = pd.DataFrame(humidity['values'], columns=['Time', 'Humidity'])
 df['Humidity'] = df['Humidity'].astype(float)
 df['Time'] = pd.to_datetime(df['Time'], unit='s')
@@ -76,7 +99,7 @@ st.line_chart(df)
 
 st.subheader("Temperatura")
 
-temperature = get_data(query=f"weather_temperature[{time_period}]")[0]
+temperature = get_data(query="weather_temperature", time_period=time_period)[0]
 df = pd.DataFrame(temperature['values'], columns=['Time', 'Temperature'])
 df['Temperature'] = df['Temperature'].astype(float)
 df['Time'] = pd.to_datetime(df['Time'], unit='s')
